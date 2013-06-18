@@ -1,6 +1,8 @@
 /**
  * @author yan
- * @module tool
+ * @module toolModel
+ * @main toolModel
+ * @namespace painter.model.toolModel
  */
 
 (function($, global){
@@ -14,7 +16,6 @@
 	   Line,
 	   CurveClosed,
 	   Rect,
-	   RectRound,
 	   Circle,
 	   //椭圆工具类
        Ellipes,
@@ -23,7 +24,6 @@
 	   Pen,
 	   CurveClosedStroke,
 	   RectStroke,
-       RectRoundStroke,
        CircleStroke,
 	   Eraser,
 	   FloodFill,
@@ -41,18 +41,43 @@
 	 * @class Tool
 	 * @constructor
 	 * @param {Object} option 当前工具参数
-	 * @extend Tool.prototype
+	 * @extends painter.model.toolModel.Tool.prototype
 	 */
 	Tool = function(option){
+	    /**
+         * 当前工具对应的名称
+         * @property name
+         * @type String
+         * @default 'Tool'
+         */
 		this.name = 'Tool';
+		
+		/**
+         * 当前工具对应的类名
+         * @property className
+         * @type String
+         * @default 'shape'
+         */
 		this.className = "shape";
+		
 		/**
 		 * 当前工具对应的鼠标对象
 		 * @property mouse
 		 * @type String
-		 * @default 'Tool'
+		 * @default 'Mouse'
 		 */
 		this.mouse = "Mouse";
+		
+		/**
+         * 当前工具对应的参数
+         * @property option
+         * @type Object
+         * @default {
+         *  strokeStyle:'#000',
+         *  fillStyle:'#000',
+         *  lineWidth:1
+         *}
+         */
 		this.option = {
 			strokeStyle:'#000',
 			fillStyle:'#000',
@@ -66,12 +91,18 @@
 	/**
 	 * 工具原型
 	 * @class Tool.prototype
-	 * @strict
+	 * @static
 	 */
 	Tool.prototype = {
+	    /**
+         * 获取类别名字
+         * @method getClassName
+         * @return {String} 当前的类别名字
+         */
 	    getClassName:function(){
 	       return this.className; 
-	    },		
+	    },
+	     
 		/**
 		 * 获取名字
 		 * @method getName
@@ -120,27 +151,28 @@
      * 图形类工具超级父类
      * @class Shape
      * @constructor
-     * @extends Shape.prorotype
+     * @extends painter.model.toolModel.Shape.prototype
      */
 	Shape = function(){
 	    /**
          * 名称
          * @property name
          * @type String
-         * @defult 'line' 
+         * @default 'Shape' 
          */
 	    this.name = "Shape";
 	    /**
          * 当前工具对应的鼠标对象
          * @property mouse
          * @type String
-         * @default 'Tool'
+         * @default 'Cross'
          */
 	    this.mouse = "Cross";
 	    
 	    /**
 	     * 初始化图形类属性面板的参数
 	     * @method initAttributes
+	     * @return {Object} 当前工具 参数
 	     */
 	    this.initAttributes = function(){
 	        //获取当前属性
@@ -169,28 +201,28 @@
                 shadowBlur:shadowBlur,
                 shadowColor:shadowColor
             });
-	    }
+	    };
 	};
 	
 	/**
 	 * 图形类工具原型
 	 * @class Shape.prototype
 	 * @static
-	 * @extends Tool
+	 * @extends painter.model.toolModel.Tool
 	 */
 	Shape.prototype = new Tool();
 	/**
 	 * 直线工具对象
 	 * @class Line
 	 * @constructor
-	 * @extend Line.prototype
+	 * @extends painter.model.toolModel.Line.prototype
 	 */
 	Line = function(){
 	    /**
 	     * 名称
 	     * @property name
 	     * @type String
-	     * @defult 'line' 
+	     * @default 'Line' 
 	     */
 		this.name = 'Line';
 		
@@ -230,7 +262,8 @@
 	/**
 	 * 直线工具原型
 	 * @class Line.prototype
-	 * @strict
+	 * @static
+	 * @extends painter.model.toolModel.Shape
 	 */
 	Line.prototype = new Shape();
 	
@@ -238,14 +271,14 @@
      * 闭合曲线工具对象
      * @class CurveClosed
      * @constructor
-     * @extend Pen.prototype
+     * @extends painter.model.toolModel.CurveClosed.prototype
      */
     CurveClosed = function(){
         /**
          * 名称
          * @property name
          * @type String
-         * @defult 'line' 
+         * @default 'CurveClosed' 
          */
         this.name = 'CurveClosed';
         
@@ -278,7 +311,8 @@
     /**
      * 闭合曲线工具原型
      * @class CurveClosed.prototype
-     * @strict
+     * @static
+     * @extends painter.model.toolModel.Shape
      */
     CurveClosed.prototype = new Shape();
     
@@ -287,14 +321,14 @@
      * 矩形工具对象
      * @class Rect
      * @constructor
-     * @extend Rect.prototype
+     * @extends painter.model.toolModel.Rect.prototype
      */
     Rect = function(){
         /**
          * 名称
          * @property name
          * @type String
-         * @defult 'line' 
+         * @default 'Rect' 
          */
         this.name = 'Rect';
         /**
@@ -333,45 +367,23 @@
     /**
      * 矩形工具原型
      * @class Rect.prototype
-     * @strict
+     * @static
+     * @extends painter.model.toolModel.Shape
      */
-    Rect.prototype = new Shape();
-    
-    /**
-     * 圆角矩形工具对象
-     * @class RectRound
-     * @constructor
-     * @extend RectRound.prototype
-     */
-    RectRound = function(){
-        /**
-         * 名称
-         * @property name
-         * @type String
-         * @defult 'line' 
-         */
-        this.name = 'RectRound';                
-    };
-    
-    /**
-     * 圆角矩形工具原型
-     * @class RectRound.prototype
-     * @strict
-     */
-    RectRound.prototype = new Rect();
+    Rect.prototype = new Shape();      
     
     /**
      * 椭圆工具对象
      * @class Circle
      * @constructor
-     * @extend Circle.prototype
+     * @extends painter.model.toolModel.Circle.prototype
      */
     Circle = function(){
         /**
          * 名称
          * @property name
          * @type String
-         * @defult 'line' 
+         * @default 'Circle' 
          */
         this.name = 'Circle';
         
@@ -410,7 +422,8 @@
     /**
      * 圆工具原型
      * @class Circle.prototype
-     * @strict
+     * @static
+     * @extends painter.model.toolModel.Shape
      */
     Circle.prototype = new Shape();
     
@@ -418,14 +431,14 @@
      * 椭圆工具对象
      * @class Ellipes
      * @constructor
-     * @extend Ellipes.prototype
+     * @extends painter.model.toolModel.Ellipes.prototype
      */
     Ellipes = function(){
         /**
          * 名称
          * @property name
          * @type String
-         * @defult 'line' 
+         * @default 'Ellipes' 
          */
         this.name = 'Ellipes';
         
@@ -464,7 +477,8 @@
     /**
      * 椭圆工具原型
      * @class Ellipes.prototype
-     * @strict
+     * @static
+     * @extends painter.model.toolModel.Shape
      */
     Ellipes.prototype = new Shape();
     
@@ -473,21 +487,21 @@
      * 轮廓类工具超级父类
      * @class Stroke
      * @constructor
-     * @extends Stroke.prorotype
+     * @extends painter.model.toolModel.Stroke.prototype
      */
     Stroke = function(){
         /**
          * 名称
          * @property name
          * @type String
-         * @defult 'line' 
+         * @default 'Stroke' 
          */
         this.name = "Stroke";
         /**
          * 当前工具对应的鼠标对象
          * @property mouse
          * @type String
-         * @default 'Tool'
+         * @default 'Cross'
          */
         this.mouse = "Cross";
         
@@ -528,7 +542,7 @@
      * 轮廓类工具原型
      * @class Stroke.prototype
      * @static
-     * @extends Tool
+     * @extends painter.model.toolModel.Tool
      */
     Stroke.prototype = new Tool();
     
@@ -536,17 +550,24 @@
      * 铅笔工具对象
      * @class Pen
      * @constructor
-     * @extend Pen.prototype
+     * @extends painter.model.toolModel.Pen.prototype
      */
     Pen = function(){
         /**
          * 名称
          * @property name
          * @type String
-         * @defult 'line' 
+         * @default 'Pen' 
          */
         this.name = 'Pen';
-        this.mouse ="Pen"
+        
+        /**
+         * 工具类对应的鼠标
+         * @property mouse
+         * @type String
+         * @default 'Pen' 
+         */
+        this.mouse ="Pen";
         
         /**
          * 初始化
@@ -578,7 +599,8 @@
     /**
      * 铅笔工具原型
      * @class Pen.prototype
-     * @strict
+     * @static
+     * @extends painter.model.toolModel.Stroke
      */
     Pen.prototype = new Stroke();
     
@@ -586,23 +608,31 @@
      * 闭合曲线工具对象
      * @class CurveClosedStroke
      * @constructor
-     * @extend Pen.prototype
+     * @extends painter.model.toolModel.CurveClosedStroke.prototype
      */
     CurveClosedStroke = function(){
         /**
          * 名称
          * @property name
          * @type String
-         * @defult 'line' 
+         * @default 'CurveClosedStroke' 
          */
         this.name = 'CurveClosedStroke';
+        
+        /**
+         * 工具类对应的鼠标
+         * @property mouse
+         * @type String
+         * @default 'Cross' 
+         */
         this.mouse = "Cross";
     };
     
     /**
      * 闭合曲线工具原型
      * @class CurveClosedStroke.prototype
-     * @strict
+     * @static
+     * @extends painter.model.toolModel.Pen
      */
     CurveClosedStroke.prototype = new Pen();        
     
@@ -610,14 +640,14 @@
      * 矩形工具对象
      * @class RectStroke
      * @constructor
-     * @extend RectStroke.prototype
+     * @extends painter.model.toolModel.RectStroke.prototype
      */
     RectStroke = function(){
         /**
          * 名称
          * @property name
          * @type String
-         * @defult 'line' 
+         * @default 'RectStroke' 
          */
         this.name = 'RectStroke';
         
@@ -658,55 +688,23 @@
     /**
      * 矩形工具原型
      * @class RectStroke.prototype
-     * @strict
+     * @static
+     * @extends painter.model.toolModel.Stroke
      */
-    RectStroke.prototype = new Stroke();
-    
-    /**
-     * 圆角矩形工具对象
-     * @class RectRoundStroke
-     * @constructor
-     * @extend RectRoundStroke.prototype
-     */
-    RectRoundStroke = function(){
-        /**
-         * 名称
-         * @property name
-         * @type String
-         * @defult 'line' 
-         */
-        this.name = 'RectRoundStroke';
-        
-        /**
-         * 初始化
-         * @method init 
-         * @return {Bollean} 初始化是否成功
-         */
-        this.init = function(){
-            //获取当前属性
-            this.initAttributes();
-        };        
-    };
-    
-    /**
-     * 圆角矩形工具原型
-     * @class RectRoundStroke.prototype
-     * @strict
-     */
-    RectRoundStroke.prototype = new RectStroke();
+    RectStroke.prototype = new Stroke();    
     
     /**
      * 椭圆工具对象
      * @class CircleStroke
      * @constructor
-     * @extend CircleStroke.prototype
+     * @extends painter.model.toolModel.CircleStroke.prototype
      */
     CircleStroke = function(){
         /**
          * 名称
          * @property name
          * @type String
-         * @defult 'line' 
+         * @default 'CircleStroke' 
          */
         this.name = 'CircleStroke';
         
@@ -746,7 +744,8 @@
     /**
      * 椭圆工具原型
      * @class CircleStroke.prototype
-     * @strict
+     * @static
+     * @extends painter.model.toolModel.Stroke
      */
     CircleStroke.prototype = new Stroke();
     
@@ -754,14 +753,14 @@
      * 十字工具对象
      * @class EllipesStroke
      * @constructor
-     * @extend EllipesStroke.prototype
+     * @extends painter.model.toolModel.EllipesStroke.prototype
      */
     EllipesStroke = function(){
         /**
          * 名称
          * @property name
          * @type String
-         * @defult 'line' 
+         * @default 'EllipesStroke' 
          */
         this.name = 'EllipesStroke';
         
@@ -801,7 +800,8 @@
     /**
      * 十字工具原型
      * @class EllipesStroke.prototype
-     * @strict
+     * @static
+     * @extends painter.model.toolModel.Stroke
      */
     EllipesStroke.prototype = new Stroke();
     
@@ -809,16 +809,23 @@
      * 橡皮工具对象
      * @class Eraser
      * @constructor
-     * @extend Eraser.prototype
+     * @extends painter.model.toolModel.Eraser.prototype
      */
     Eraser = function(){
         /**
          * 名称
          * @property name
          * @type String
-         * @defult 'line' 
+         * @default 'Eraser' 
          */
         this.name = 'Eraser';
+        
+        /**
+         * 鼠标名称
+         * @property mouse
+         * @type String
+         * @default 'Eraser' 
+         */
         this.mouse = "Eraser";
         
         /**
@@ -841,6 +848,7 @@
             
             //设置参数
             return this.setOption({
+                opacity: opacity,
                 lineWidth: width,
                 color:'#fff',
                 shadowOffsetX:shadowOffsetX,
@@ -872,24 +880,32 @@
     /**
      * 橡皮工具原型
      * @class Eraser.prototype
-     * @strict
+     * @static
+     * @extends painter.model.toolModel.Tool
      */
     Eraser.prototype = new Tool();
     
     /**
-     * 橡皮工具对象
+     * 油漆桶工具对象
      * @class FloodFill
      * @constructor
-     * @extend FloodFill.prototype
+     * @extends painter.model.toolModel.FloodFill.prototype
      */
     FloodFill = function(){
         /**
          * 名称
          * @property name
          * @type String
-         * @defult 'line' 
+         * @default 'FloodFill' 
          */
         this.name = 'FloodFill';
+        
+        /**
+         * 鼠标名称
+         * @property mouse
+         * @type String
+         * @default 'FloodFill' 
+         */
         this.mouse = "FloodFill";
         
         /**
@@ -900,8 +916,7 @@
         this.init = function(){
             //获取当前属性
             var 
-              $attributePanel = $('#tool-eraser-attribute-panel'),
-              opacity = $('.opacity',$attributePanel).eq(0).val(),
+              $attributePanel = $('#tool-flood-fill-attribute-panel'),
               color = $('#tool-wrap .tool .color').eq(0).val(),
               canvas = global.painter.canvas.currentCanvasContainer.getCanvas(),
               width = canvas.getWidth(),
@@ -922,31 +937,46 @@
          * @return {Object} 设置完的参数
          */
         this.setPoint = function(pointList){
-            return this.getOption();
+            var
+                endPoint = pointList.getEnd(),
+                x = endPoint.x,
+                y = endPoint.y;
+            return this.setOption({
+                x:x,
+                y:y
+            });
         };
     };
     
     /**
-     * 橡皮工具原型
+     * 油漆桶工具原型
      * @class FloodFill.prototype
-     * @strict
+     * @static
+     * @extends painter.model.toolModel.Tool
      */
     FloodFill.prototype = new Tool();
     
     /**
-     * 橡皮工具对象
+     * 吸管工具对象
      * @class EyeDropper
      * @constructor
-     * @extend EyeDropper.prototype
+     * @extends painter.model.toolModel.EyeDropper.prototype
      */
     EyeDropper = function(){
         /**
          * 名称
          * @property name
          * @type String
-         * @defult 'line' 
+         * @default 'EyeDropper' 
          */
         this.name = 'EyeDropper';
+        
+        /**
+         * 鼠标名称
+         * @property mouse
+         * @type String
+         * @default 'EyeDropper' 
+         */
         this.mouse = "EyeDropper";
         
         /**
@@ -980,9 +1010,10 @@
     };
     
     /**
-     * 橡皮工具原型
+     * 吸管工具原型
      * @class FloodFill.prototype
-     * @strict
+     * @static
+     * @extends painter.model.toolModel.Tool
      */
     EyeDropper.prototype = new Tool();
     
@@ -990,14 +1021,14 @@
      * 十字工具对象
      * @class Cross
      * @constructor
-     * @extend Cross.prototype
+     * @extends painter.model.toolModel.Cross.prototype
      */
     Cross = function(){
         /**
          * 名称
          * @property name
          * @type String
-         * @defult 'line' 
+         * @default 'Cross' 
          */
         this.name = 'Cross';
         
@@ -1036,7 +1067,8 @@
     /**
      * 十字工具原型
      * @class Cross.prototype
-     * @strict
+     * @static
+     * @extends painter.model.toolModel.Tool
      */
     Cross.prototype = new Tool();        
         
@@ -1045,16 +1077,23 @@
      * 十字工具对象
      * @class Text
      * @constructor
-     * @extend Text.prototype
+     * @extends painter.model.toolModel.Text.prototype
      */
     Text = function(){
         /**
          * 名称
          * @property name
          * @type String
-         * @defult 'line' 
+         * @default 'Text' 
          */
         this.name = 'Text';
+        
+        /**
+         * 鼠标名称
+         * @property mouse
+         * @type String
+         * @default 'Text' 
+         */
         this.mouse = "Text";
         
         /**
@@ -1128,7 +1167,8 @@
     /**
      * 十字工具原型
      * @class Text.prototype
-     * @strict
+     * @static
+     * @extends painter.model.toolModel.Tool
      */
     Text.prototype = new Tool();
     
@@ -1136,14 +1176,14 @@
      * 十字工具对象
      * @class TextStroke
      * @constructor
-     * @extend TextStroke.prototype
+     * @extends painter.model.toolModel.TextStroke.prototype
      */
     TextStroke = function(){
         /**
          * 名称
          * @property name
          * @type String
-         * @defult 'line' 
+         * @default 'line' 
          */
         this.name = 'TextStroke';            
     };
@@ -1151,7 +1191,8 @@
     /**
      * 十字工具原型
      * @class TextStroke.prototype
-     * @strict
+     * @static
+     * @extends painter.model.toolModel.Text
      */
     TextStroke.prototype = new Text();
 	
@@ -1162,12 +1203,10 @@
 	global.painter.model.toolModel.Line = Line;
 	global.painter.model.toolModel.CurveClosed = CurveClosed;
 	global.painter.model.toolModel.Rect = Rect;
-	global.painter.model.toolModel.RectRound = RectRound;
 	global.painter.model.toolModel.Circle = Circle;
 	global.painter.model.toolModel.Pen = Pen;
 	global.painter.model.toolModel.CurveClosedStroke = CurveClosedStroke;
 	global.painter.model.toolModel.RectStroke = RectStroke;
-    global.painter.model.toolModel.RectRoundStroke = RectRoundStroke;
     global.painter.model.toolModel.CircleStroke = CircleStroke;
 	global.painter.model.toolModel.Eraser = Eraser;
 	global.painter.model.toolModel.FloodFill = FloodFill;

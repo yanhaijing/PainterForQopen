@@ -1,7 +1,8 @@
 /**
  * 工具模块
  * @author yan
- * @namespace controls
+ * @module tool
+ * @namespace painter.controler
  */
 
 (function($, global){
@@ -13,7 +14,7 @@
 	 * 工具类
 	 * @class Tool
 	 * @constructor
-	 * @extends Tool.prorotype
+	 * @extends painter.controler.Tool.prototype
 	 */
 	Tool = function(){
 	    /**
@@ -205,7 +206,6 @@
 			    
 			    //更新提示
 			    $info.html(value);
-			    global.console.log($this.val());
 			});
 			//绑定属性面板复选框属性更改事件
 			$document.delegate('.tool-attribute-panel :checkbox', "change", function(e){
@@ -213,15 +213,13 @@
                      $this = $(this),
                      attr = $this.attr('data-attr'),
                      value = $this.val(),
-                     checked = $this.attr("checked"),
+                     checked = $this.prop("checked"),
                      currentTool = global.painter.tool.currentToolContainer.getTool(),
                      option = {};
                 
                 //更新当前工具对象参数     
-                option[attr] = checked === "checked" ? value : "";//获取数据
-                currentTool.setOption(option);
-
-                global.console.log(option[attr]);
+                option[attr] = checked === true ? value : "";//获取数据
+                currentTool.setOption(option);               
             });
             //绑定属性面板单选框属性更改事件
             $document.delegate('.tool-attribute-panel :radio', "change", function(e){
@@ -235,8 +233,6 @@
                 //更新当前工具对象参数     
                 option[attr] = value;//获取数据
                 currentTool.setOption(option);
-
-                global.console.log(option[attr]);
             });
 		}
 	};

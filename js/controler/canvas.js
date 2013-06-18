@@ -1,8 +1,8 @@
 /**
  * 画布控制器
  * @author yan
- * @namespace controler
  * @module canvas
+ * @namespace painter.controler
  */
 
 (function($, global){
@@ -57,21 +57,36 @@
             this.clickStatus = status;
             return status; 
         },
+        
         /**
          * 初始化
          * @method init
          */
         init:function(){
             var
+            
+                negativeCanvasDom = $('.canvas-negative').get(0),
+                negativeCanvas = new global.painter.model.CanvasModel(),
+                negativeCanvasContainer = Object.create(global.painter.model.CanvasContainerModel),
+                
                 currentCanvasDom = $('.canvas-layer').get(0),
                 currentCanvas = new global.painter.model.CanvasModel(),
                 currentCanvasContainer = Object.create(global.painter.model.CanvasContainerModel),
+                
                 bufferCanvasDom = $('.canvas-buffer').get(0),
                 bufferCanvas = new global.painter.model.CanvasModel(),
                 bufferCanvasContainer = Object.create(global.painter.model.CanvasContainerModel),
+                
                 mouseCanvasDom = $('.canvas-mouse').get(0),
                 mouseCanvas = new global.painter.model.CanvasModel(),
                 mouseCanvasContainer = Object.create(global.painter.model.CanvasContainerModel);
+            
+            //初始化当前缓冲画布
+            negativeCanvas.init(negativeCanvasDom, "negativeCanvas");
+            negativeCanvasContainer.init(negativeCanvas);
+            global.painter = global.painter || {};
+            global.painter.canvas = global.painter.canvas || {};
+            global.painter.canvas.negativeCanvasContainer = negativeCanvasContainer;
                 
             //初始化当前画布
             currentCanvas.init(currentCanvasDom, "currentCanvas");
@@ -214,6 +229,101 @@
                 //更新当前工具
                 currentTool = global.painter.tool.currentToolContainer.getTool();
             });
+            
+            //绑定鼠标画布图层鼠标移动事件
+            document.getElementById('canvas-mouse').addEventListener('touchmove', function(e){
+                var
+                    point = null,
+                    pointList = null,
+                    index = "",
+                    shape = null,
+                    option = null,
+                    status = that.getClickStatus(),
+                    mouseTool = null,
+                    mouse = '',
+                    mouseOption = null,
+                    mouseShape = null,
+                    className = currentTool.getClassName(),
+                    touch = e.changedTouches[0];
+                
+                e.preventDefault();    
+                //判断工具是否为图形类
+                if(className === "shape"){
+                    point = {
+                        x:touch.pageX - offsetLeft,
+                        y:touch.pageY - offsetTop
+                    };                                
+                    mouse = currentTool.getMouse();//获取鼠标名称
+                    mouseOption = currentTool.getOption();//获取参数
+                    mouseShape = new global.painter.model.mouseModel[mouse]();//创建鼠标对象                            
+                    mouseShape.init(mouseOption, point);//初始化鼠标图形
+                    //绘制鼠标图形到鼠标层
+                    mouseCanvas.clear();
+                    mouseCanvas.paint(mouseShape); 
+                    
+                    
+                    //鼠标按下绘制图形操作
+                    if(status){     
+                        index = currentTool.getName();
+                        //添加鼠标坐标
+                        pointList = that.getPointList();
+                        pointList.add(point);                                                                                               
+                        option = currentTool.setPoint(pointList);  
+                        
+                        shape = new global.painter.model.shapeModel[index]();  
+                        shape.init(option); 
+                        bufferCanvas.clear();
+                        bufferCanvas.paint(shape);  
+                    }
+                }                                           
+            }, false);
+            
+            //绑定鼠标按下事件
+            document.getElementById('canvas-mouse').addEventListener('touchstart', function(e){
+                var
+                    touch = e.touches[0],
+                    point = {
+                        x:touch.pageX - offsetLeft,
+                        y:touch.pageY - offsetTop
+                    },
+                    pointList = that.getPointList(),
+                    index = '',
+                    shape = null,
+                    option = null;
+                
+                e.preventDefault();
+                that.getPointList().init();//初始化坐标列表    
+                that.getPointList().add(point);//添加鼠标坐标
+                that.setClickStatus(true);                                
+            }, false);
+            
+            //绑定鼠标弹起事件
+            document.getElementById('canvas-mouse').addEventListener('touchend', function(e){
+                var
+                    touch = e.changedTouches[0],
+                    point = {
+                        x:touch.pageX - offsetLeft,
+                        y:touch.pageY - offsetTop
+                    },
+                    pointList = that.getPointList(),
+                    index = currentTool.getName(),
+                    shape = null,
+                    option = null,
+                    className = currentTool.getClassName();
+                    
+                e.preventDefault();
+                if(className === "shape"){
+                    that.getPointList().add(point);//添加鼠标坐标
+                    that.setClickStatus(false);//更新鼠标点击状态
+                    //绘制图形
+                    shape = new global.painter.model.shapeModel[index]()
+                    option = currentTool.setPoint(pointList);    
+                    shape.init(option); 
+                    currentCanvas.paint(shape);
+                    
+                    bufferCanvas.clear();//清除缓冲画布
+                }                    
+            }, false);
         }
     };
     

@@ -1,6 +1,7 @@
 /**
  * @author yan
- * @namespace shape
+ * @module shapeModel
+ * @namespace painter.model.shapeModel
  */
 
 (function($, global){
@@ -13,7 +14,6 @@
         Line = null,
         CurveClosed,
         Rect = null,
-        RectRound = null,
         Circle = null,
         //椭圆类
         Ellipes,
@@ -22,7 +22,6 @@
         Pen = null,
         CurveClosedStroke,
         RectStroke = null,
-        RectRoundStroke = null,
         CircleStroke = null,
         Eraser,
         FloodFill,
@@ -35,19 +34,24 @@
         //文字类
         Text,
         //文本轮廓类
-        TextStroke;
+        TextStroke,
+        
+        //图像
+        ImageShape;
+        
+        
     /**
      * Shape 构造函数
      * @class Shape
      * @constructor
-     * @extends Shape.prototype
+     * @extends painter.model.shapeModel.Shape.prototype
      */
 	Shape = function(){
 	    /**
 	     * 名称
 	     * @property name
 	     * @type String
-	     * @default Shapee 
+	     * @default Shape 
 	     */
 	    this.name = 'Shape';
 	    
@@ -55,17 +59,16 @@
 	     * 图形参数
 	     * @property option
 	     * @type Object
-	     * @default null 
+	     * @default {} 
 	     */
-	    this.option = null;
+	    this.option = {};
 	};
 	
 	/**
 	 * Shape 原型
 	 * @class Shape.prototype
 	 * @static
-	 */
-	
+	 */	
 	Shape.prototype = {	   
 	    /**
 	     * 初始化对象
@@ -90,6 +93,7 @@
          * @param {Object} option 参数
          */
         initOption:function(option){
+			this.option = {};//初始化为空
             this.setOption(option);
         },
         /**
@@ -99,7 +103,9 @@
          * @return {Bollean} 是否设置成功
          */
         setOption:function(option){
-            this.option = option;
+            $.extend(true, this.option, option);
+            
+            return this.option;
         },
         
         /**
@@ -118,21 +124,30 @@
          */
          repaint:function(context){
             this.paint(context);
-         }
+         },
+         
+         /**
+         * 设置填充轮廓类图形的属性
+         * @method setAttributes
+         * @param {Object} context 设置的上下文
+         */
+        setAttributes:function(context){
+            //nothing
+        }
 	};
 	
 	/**
 	 * 填充轮廓类图形超级父类
 	 * @class FillStroke
 	 * @constructor
-	 * @extends FillStroke.prototype
+	 * @extends painter.model.shapeModel.FillStroke.prototype
 	 */
 	FillStroke = function(){
 	    /**
          * 名称
          * @property name
          * @type String
-         * @default Shape
+         * @default FillStroke
          */
 	    this.name = "FillStroke";
 	    
@@ -158,11 +173,12 @@
             context.shadowColor = option.shadowColor;
 	    }
 	};
+	
 	/**
      * 填充轮廓类图形超级父类原型
-     * @class FillStroke
+     * @class FillStroke.prototype
      * @static
-     * @extends Shape
+     * @extends painter.model.shapeModel.Shape
      */
 	FillStroke.prototype = new Shape();
 	
@@ -170,14 +186,14 @@
 	 * 直线对象
 	 * @class Line
 	 * @constructor
-	 * @extends Line.protorype 
+	 * @extends painter.model.shapeModel.Line.protorype 
 	 */
 	Line = function(){
 	    /**
          * 名称
          * @property name
          * @type String
-         * @default Shape
+         * @default Line
          */
 	    this.name = 'Line';
 	    
@@ -211,7 +227,8 @@
 	/**
 	 * 直线对象原型
 	 * @class Line.prototype
-	 * @static 
+	 * @static
+	 * @extends painter.model.shapeModel.FillStroke
 	 */
 	Line.prototype = new FillStroke();
 	
@@ -219,14 +236,14 @@
      * 闭合曲线对象
      * @class CurveClosed
      * @constructor
-     * @extends CurveClosed.prorotype 
+     * @extends painter.model.shapeModel.CurveClosed.prototype 
      */
     CurveClosed = function(){
        /**
          * 名称
          * @property name
          * @type String
-         * @default Shape
+         * @default CurveClosed
          */
         this.name = 'CurveClosed';
         
@@ -266,6 +283,7 @@
      * 闭合曲线对象原型
      * @class CurveClosed.prototype
      * @static 
+     * @extends painter.model.shapeModel.FillStroke
      */
     CurveClosed.prototype = new FillStroke();
     
@@ -273,14 +291,14 @@
 	 * 矩形对象
 	 * @class Rect
 	 * @constructor
-	 * @extends Rect.prorotype 
+	 * @extends painter.model.shapeModel.Rect.prototype 
 	 */
 	Rect = function(){
 	   /**
          * 名称
          * @property name
          * @type String
-         * @default Shape
+         * @default Rect
          */
         this.name = 'Rect';
         
@@ -309,44 +327,22 @@
      * 矩形对象原型
      * @class Rect.prototype
      * @static 
+     * @extends painter.model.shapeModel.FillStroke
      */
     Rect.prototype = new FillStroke();
-    
-    /**
-     * 圆角矩形对象
-     * @class RectRound
-     * @constructor
-     * @extends RectRound.prorotype 
-     */
-    RectRound = function(){
-       /**
-         * 名称
-         * @property name
-         * @type String
-         * @default Shape
-         */
-        this.name = 'RectRound';
-    };
-    
-    /**
-     * 矩形对象原型
-     * @class RectRound.prototype
-     * @static 
-     */
-    RectRound.prototype = new Rect();
     
     /**
      * 椭圆对象
      * @class Circle
      * @constructor
-     * @extends Circle.prorotype 
+     * @extends painter.model.shapeModel.Circle.prototype 
      */
     Circle = function(){
        /**
          * 名称
          * @property name
          * @type String
-         * @default Shape
+         * @default Circle
          */
         this.name = 'Circle';
         
@@ -378,6 +374,7 @@
      * 圆形对象原型
      * @class Circle.prototype
      * @static 
+     * @extends painter.model.shapeModel.FillStroke
      */
     Circle.prototype = new FillStroke();
     
@@ -393,18 +390,19 @@
        context.closePath();
        return context;
     }
+    
     /**
      * 椭圆类对象
      * @class Ellipes
      * @constructor
-     * @extends Ellipes.prorotype 
+     * @extends painter.model.shapeModel.Ellipes.prototype 
      */
     Ellipes = function(){
        /**
          * 名称
          * @property name
          * @type String
-         * @default Shape
+         * @default Ellipes
          */
         this.name = 'Ellipes';
         
@@ -440,6 +438,7 @@
      * 椭圆类原型
      * @class Ellipes.prototype
      * @static 
+     * @extends painter.model.shapeModel.FillStroke
      */
     Ellipes.prototype = new FillStroke();
     
@@ -447,14 +446,14 @@
      * 轮廓类图形超级父类
      * @class Stroke
      * @constructor
-     * @extends Stroke.prototype
+     * @extends painter.model.shapeModel.Stroke.prototype
      */
     Stroke = function(){
         /**
          * 名称
          * @property name
          * @type String
-         * @default Shape
+         * @default Stroke
          */
         this.name = "Stroke";
         
@@ -481,9 +480,9 @@
     };
     /**
      * 轮廓类图形超级父类原型
-     * @class Stroke
+     * @class Stroke.prototype
      * @static
-     * @extends Shape
+     * @extends painter.model.shapeModel.Shape
      */
     Stroke.prototype = new Shape();
     
@@ -491,14 +490,14 @@
      * 铅笔对象
      * @class Pen
      * @constructor
-     * @extends Pen.prorotype 
+     * @extends painter.model.shapeModel.Pen.prototype 
      */
     Pen = function(){
        /**
          * 名称
          * @property name
          * @type String
-         * @default Shape
+         * @default Pen
          */
         this.name = 'Pen';
         
@@ -536,7 +535,7 @@
      * 铅笔对象原型
      * @class Pen.prototype
      * @static 
-     * @extends Stroke
+     * @extends painter.model.shapeModel.Stroke
      */
     Pen.prototype = new Stroke();
     
@@ -544,14 +543,14 @@
      * 铅笔对象
      * @class CurveClosedStroke
      * @constructor
-     * @extends CurveClosedStroke.prorotype 
+     * @extends painter.model.shapeModel.CurveClosedStroke.prototype 
      */
     CurveClosedStroke = function(){
        /**
          * 名称
          * @property name
          * @type String
-         * @default Shape
+         * @default "CurveClosedStroke"
          */
         this.name = 'CurveClosedStroke';
         
@@ -590,6 +589,7 @@
      * 铅笔对象原型
      * @class CurveClosedStroke.prototype
      * @static 
+     * @extends painter.model.shapeModel.Stroke
      */
     CurveClosedStroke.prototype = new Stroke();    
     
@@ -597,14 +597,14 @@
      * 矩形对象
      * @class RectStroke
      * @constructor
-     * @extends RectStroke.prorotype 
+     * @extends painter.model.shapeModel.RectStroke.prototype 
      */
     RectStroke = function(){
        /**
          * 名称
          * @property name
          * @type String
-         * @default Shape
+         * @default 'RectStroke'
          */
         this.name = 'RectStroke';
         
@@ -632,44 +632,22 @@
      * 矩形对象原型
      * @class RectStroke.prototype
      * @static 
+     * @extends painter.model.shapeModel.Stroke
      */
-    RectStroke.prototype = new Stroke();
-    
-    /**
-     * 圆角矩形对象
-     * @class RectRoundStroke
-     * @constructor
-     * @extends RectRoundStroke.prorotype 
-     */
-    RectRoundStroke = function(){
-       /**
-         * 名称
-         * @property name
-         * @type String
-         * @default Shape
-         */
-        this.name = 'RectRoundStroke';
-    };
-    
-    /**
-     * 矩形对象原型
-     * @class RectRoundStroke.prototype
-     * @static 
-     */
-    RectRoundStroke.prototype = new RectStroke();
+    RectStroke.prototype = new Stroke();      
     
     /**
      * 椭圆对象
      * @class CircleStroke
      * @constructor
-     * @extends CircleStroke.prorotype 
+     * @extends painter.model.shapeModel.CircleStroke.prototype 
      */
     CircleStroke = function(){
        /**
          * 名称
          * @property name
          * @type String
-         * @default Shape
+         * @default 'CircleStroke'
          */
         this.name = 'CircleStroke';
         
@@ -700,6 +678,7 @@
      * 圆形对象原型
      * @class CircleStroke.prototype
      * @static 
+     * @extends painter.model.shapeModel.Stroke
      */
     CircleStroke.prototype = new Stroke();
     
@@ -707,14 +686,14 @@
      * 椭圆类对象
      * @class EllipesStroke
      * @constructor
-     * @extends EllipesStroke.prorotype 
+     * @extends painter.model.shapeModel.EllipesStroke.prototype 
      */
     EllipesStroke = function(){
        /**
          * 名称
          * @property name
          * @type String
-         * @default Shape
+         * @default 'EllipesStroke'
          */
         this.name = 'EllipesStroke';
         
@@ -749,15 +728,22 @@
      * 椭圆类原型
      * @class EllipesStroke.prototype
      * @static 
+     * @extends painter.model.shapeModel.Stroke
      */
     EllipesStroke.prototype = new Stroke();
     
+    /**
+     * 橡皮类对象
+     * @class Eraser
+     * @constructor
+     * @extends painter.model.shapeModel.Eraser.prototype 
+     */
     Eraser = function(){
        /**
          * 名称
          * @property name
          * @type String
-         * @default Shape
+         * @default 'Eraser'
          */
         this.name = 'Eraser';
         
@@ -800,24 +786,25 @@
     };
     
     /**
-     * 铅笔对象原型
+     * 橡皮类原型
      * @class Eraser.prototype
      * @static 
+     * @extends painter.model.shapeModel.Shape
      */
     Eraser.prototype = new Shape();
     
-        /**
-     * 铅笔对象
+    /**
+     * 油漆桶对象
      * @class FloodFill
      * @constructor
-     * @extends FloodFill.prorotype 
+     * @extends painter.model.shapeModel.FloodFill.prototype 
      */
     FloodFill = function(){
        /**
          * 名称
          * @property name
          * @type String
-         * @default Shape
+         * @default 'FloodFill'
          */
         this.name = 'FloodFill';        
         
@@ -829,40 +816,105 @@
         this.paint = function(context){
             var 
                option = this.getOption(),
+               color = option.fillStyle,
+               start = color.indexOf("(") + 1,
+               temp = color.slice(start, -1),
+               temps = temp.split(","),
+               colorObj = {
+                   r:parseInt(temps[0], 10),
+                   g:parseInt(temps[1], 10),
+                   b:parseInt(temps[2], 10),
+                   a:Math.ceil((temps[3]||1) * 255)
+               },             
+               x = option.x,
+               y = option.y,               
                width = option.width,
-               height = option.height;
+               height = option.height,
+               imageData = context.getImageData(0, 0, width, height),
+               datas = imageData.data,
+               index = (width * y + x) * 4,
+               r = datas[index],
+               g = datas[index + 1],
+               b = datas[index + 2],
+               a = datas[index + 3] / 255,
+               sourceColor = "rgba(".concat(r, ",", g, ",", b, ",", a, ")");
             
+            function flood(x, y, width, height, datas, sourceColor, desColor, desColorObj){
+                var
+                    index = (width * y + x) * 4,
+                    r = datas[index],
+                    g = datas[index + 1],
+                    b = datas[index + 2],
+                    a = datas[index + 3] / 255,
+                    color = "rgba(".concat(r, ",", g, ",", b, ",", a, ")");
+                
+                //如果当前像素颜色和  目的颜色相等，返回
+                if(color === desColor){
+                    return 1;
+                }
+                
+                //如果颜色和元颜色一样,递归
+                if(color === sourceColor){
+                    //颜色一样替换颜色为目的颜色
+                    datas[index] = desColorObj.r;
+                    datas[index + 1] = desColorObj.g;
+                    datas[index + 2] = desColorObj.b;
+                    datas[index + 3] = desColorObj.a;
+                    
+                    //递归
+                    if(x > 0){
+                        flood(x - 1, y, width, height, datas, sourceColor, desColor, desColorObj);
+                    }
+                    if(x < width){
+                        flood(x + 1, y, width, height, datas, sourceColor, desColor, desColorObj);
+                    }
+                    if(y > 0){
+                        flood(x, y-1, width, height, datas, sourceColor, desColor, desColorObj);
+                    }
+                    if(y < height){
+                        flood(x, y+1, width, height, datas, sourceColor, desColor, desColorObj);
+                    }
+                }
+                
+                return 0;
+            }
+            
+            try{
+                flood(x, y, width, height, datas, sourceColor, color, colorObj);
+            }catch(ex){
+                global.console.log(ex.message);
+            }
+                       
             context.save();//保存上下文信息            
             
-            //设置属性
-            context.fillStyle = option.fillStyle;
-            context.globalAlpha = option.opacity / 100;          
+            //绘制         
+            context.putImageData(imageData, 0, 0);
             
-            //绘制
-            context.fillRect(0,0,width,height);
-            context.restore();//回复上下文
+            //回复上下文
+            context.restore();
         };
     };
     
     /**
-     * 铅笔对象原型
+     * 油漆桶对象原型
      * @class FloodFill.prototype
      * @static 
+     * @extends painter.model.shapeModel.Shape
      */
     FloodFill.prototype = new Shape();
     
-            /**
-     * 铅笔对象
+    /**
+     * 吸管对象
      * @class EyeDropper
      * @constructor
-     * @extends EyeDropper.prorotype 
+     * @extends painter.model.shapeModel.EyeDropper.prototype 
      */
     EyeDropper = function(){
        /**
          * 名称
          * @property name
          * @type String
-         * @default Shape
+         * @default 'EyeDropper'
          */
         this.name = 'EyeDropper';
         
@@ -883,17 +935,22 @@
                color = "rgba(".concat(r, ",", g, ",", b, ",", a, ")");
                
             $color.spectrum("set", color);
-            global.console.log(color,datas);
-        };  
+        };
+        
+        /**
+         * 重绘
+         * @method repaint
+         */  
         this.repaint = function(){
             //do nothing
-        } 
+        }; 
     };
     
     /**
-     * 铅笔对象原型
+     * 吸管对象原型
      * @class EyeDropper.prototype
      * @static 
+     * @extends painter.model.shapeModel.Shape
      */
     EyeDropper.prototype = new Shape();
     
@@ -901,14 +958,14 @@
      * 十字类对象
      * @class Cross
      * @constructor
-     * @extends Cross.prorotype 
+     * @extends painter.model.shapeModel.Cross.prototype 
      */
     Cross = function(){
        /**
          * 名称
          * @property name
          * @type String
-         * @default Shape
+         * @default 'Cross'
          */
         this.name = 'Cross';
         
@@ -963,21 +1020,22 @@
      * 十字类原型
      * @class Cross.prototype
      * @static 
+     * @extends painter.model.shapeModel.Shape
      */
     Cross.prototype = new Shape();                
     
     /**
-     * 椭圆类对象
+     * 文本类对象
      * @class Text
      * @constructor
-     * @extends Text.prorotype 
+     * @extends painter.model.shapeModel.Text.prototype 
      */
     Text = function(){
        /**
          * 名称
          * @property name
          * @type String
-         * @default Shape
+         * @default 'Text'
          */
         this.name = 'Text';
         
@@ -1028,26 +1086,27 @@
     };
         
     /**
-     * 椭圆类原型
+     * 文本类原型
      * @class Text.prototype
      * @static 
+     * @extends painter.model.shapeModel.Shape
      */
     Text.prototype = new Shape();
     
     /**
-     * 椭圆类对象
+     * 文本轮廓类对象
      * @class TextStroke
      * @constructor
-     * @extends TextStroke.prorotype 
+     * @extends painter.model.shapeModel.TextStroke.prototype 
      */
     TextStroke = function(){
        /**
          * 名称
          * @property name
          * @type String
-         * @default Shape
+         * @default 'TextStroke'
          */
-        this.name = 'Text';
+        this.name = 'TextStroke';
         
         /**
          * 绘制矩形图形
@@ -1073,11 +1132,66 @@
     };
         
     /**
-     * 椭圆类原型
+     * 文本轮廓类原型
      * @class TextStroke.prototype
      * @static 
+     * @extends painter.model.shapeModel.Text
      */
     TextStroke.prototype = new Text();
+    
+    /**
+     * 图像类对象
+     * @class ImageShape
+     * @constructor
+     * @extends painter.model.shapeModel.ImageShape.prototype 
+     */
+    ImageShape = function(){
+       /**
+         * 名称
+         * @property 'ImageShape'
+         * @type String
+         * @default Shape
+         */
+        this.name = 'ImageShape';        
+        
+        /**
+         * 绘制矩形图形
+         * @method paint
+         * @param {Object} context 绘图上下文 
+         */
+        this.paint = function(context){
+           var 
+               option = this.getOption(),
+               x = option.x,
+               y = option.y,
+               src = option.src,
+               width = option.width,
+               height = option.height,
+               image = new Image(),
+               that = this;
+            
+            image.src = src;
+            
+            image.onload = function(){
+                context.save();//保存上下文信息            
+            
+                //设置属性
+                that.setAttributes(context); 
+                
+                //绘制图形      
+                context.drawImage(image, x, y, width, height);          
+                context.restore();//回复上下文
+            };            
+        };   
+    };
+        
+    /**
+     * 图像类原型
+     * @class ImageShape.prototype
+     * @static 
+     * @extends painter.model.shapeModel.Shape
+     */
+    ImageShape.prototype = new Shape();
 	
 	//添加变量
 	global.painter = global.painter || {};
@@ -1086,12 +1200,10 @@
 	global.painter.model.shapeModel.Line = Line;
 	global.painter.model.shapeModel.CurveClosed = CurveClosed;
 	global.painter.model.shapeModel.Rect = Rect;
-	global.painter.model.shapeModel.RectRound = RectRound;
 	global.painter.model.shapeModel.Circle = Circle;
 	global.painter.model.shapeModel.Pen = Pen;
 	global.painter.model.shapeModel.CurveClosedStroke = CurveClosedStroke;
 	global.painter.model.shapeModel.RectStroke = RectStroke;
-    global.painter.model.shapeModel.RectRoundStroke = RectRoundStroke;
     global.painter.model.shapeModel.CircleStroke = CircleStroke;
 	global.painter.model.shapeModel.Eraser = Eraser;
 	global.painter.model.shapeModel.FloodFill = FloodFill;
@@ -1101,4 +1213,5 @@
 	global.painter.model.shapeModel.EllipesStroke = EllipesStroke;
 	global.painter.model.shapeModel.Text = Text;
 	global.painter.model.shapeModel.TextStroke = TextStroke;
+	global.painter.model.shapeModel.ImageShape = ImageShape;
 }(jQuery, window));
